@@ -2,16 +2,20 @@
 <package >
   <metadata>
     <id>KTCommon</id>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
+    <title>$title$</title>
     <authors>kentseng</authors>
     <owners>kentseng</owners>
     <licenseUrl>https://github.com/DevTainan/KTCommon</licenseUrl>
     <projectUrl>https://github.com/DevTainan/KTCommon</projectUrl>
-    <iconUrl>https://github.com/DevTainan/KTCommon/tree/master/KTCommon/images/csharp.png</iconUrl>
+    <iconUrl>https://github.com/DevTainan/KTCommon/tree/master/KTCommon/KTCommon/images/csharp.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.NET Common Lib</description>
     <releaseNotes>First release of the package.</releaseNotes>
     <copyright>Copyright 2017 (c) DevTainan. All rights reserved.</copyright>
     <tags>KTCommon Lib</tags>
   </metadata>
+  <files>
+    <file src="lib\**" target="lib" />
+  </files>
 </package>
