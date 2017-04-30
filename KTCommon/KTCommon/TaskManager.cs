@@ -115,7 +115,12 @@ namespace KTCommon
             _timer.Enabled = true;
 
             // 若是啟動, 需先執行一次動作
-            OnTimedEvent(this, null);
+            //OnTimedEvent(this, null);
+            var thread = new System.Threading.Thread(delegate ()
+            {
+                OnTimedEvent(this, null);
+            });
+            thread.Start();
         }
 
         public void Stop()
