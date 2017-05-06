@@ -11,18 +11,35 @@ namespace KTCommon
     /// <remarks>
     /// 修改 GEDMachine 的元件
     /// </remarks>
-    public class FileLog
+    public class FileLog : IFileLog
     {
         /*___________________________________________________________________________________*/
         /* Event */
         #region Event
-
+        
+        /// <summary>
+        /// 寫 log 事件
+        /// </summary>
         public EventHandler<LogArgs> OnLogging;
 
+        /// <summary>
+        /// log 參數
+        /// </summary>
         public class LogArgs : EventArgs
         {
+            /// <summary>
+            /// 時間
+            /// </summary>
             public string DateTime { get; set; }
+
+            /// <summary>
+            /// 訊息
+            /// </summary>
             public string Message { get; set; }
+
+            /// <summary>
+            /// log 等級
+            /// </summary>
             public LogLevelType LogLevel { get; set; }
         }
 
@@ -40,9 +57,9 @@ namespace KTCommon
         #region Members
 
         /// <summary>
-        /// 實際寫檔案的路徑
+        /// 實際寫檔案的資料夾路徑
         /// </summary>
-        protected string LogPath;
+        protected string LogDirPath;
 
         /// <summary>
         /// 例外的錯誤紀錄
@@ -80,12 +97,25 @@ namespace KTCommon
         /// </summary>
         public LogLevelType LogLevel { get; set; }
 
+        /// <summary>
+        /// Log 檔案保留天數, 設定 0 表示不啟用刪除
+        /// </summary>
+        public int LogKeepDays { get; set; }
+
         #endregion
 
 
         /*___________________________________________________________________________________*/
         /* PublicMethods */
         #region PublicMethods
+
+        /// <summary>
+        /// 建構式
+        /// </summary>
+        /// <param name="fileName">檔案名稱</param>
+        /// <param name="fileExtensionName">副檔名</param>
+        /// <param name="fileRootPath">根目錄的路徑</param>
+        /// <param name="subDirName">子目錄的路徑</param>
         public FileLog(string fileName, string fileExtensionName, string fileRootPath, string subDirName)
         {
             FileName = fileName;                        // LOGFile
@@ -102,16 +132,16 @@ namespace KTCommon
             {
                 if (SubDirectory == "")
                 {
-                    LogPath = FileRootPath;
+                    LogDirPath = FileRootPath;
                 }
                 else
                 {
-                    LogPath = FileRootPath + "\\" + SubDirectory;
+                    LogDirPath = FileRootPath + "\\" + SubDirectory;
                 }
                 // 建立Log Directory
-                if (Directory.Exists(LogPath) == false)
+                if (Directory.Exists(LogDirPath) == false)
                 {
-                    Directory.CreateDirectory(LogPath);
+                    Directory.CreateDirectory(LogDirPath);
                 }
 
             }
@@ -193,9 +223,36 @@ namespace KTCommon
             }
 
             string strText = string.Format("{0} {1} {2}\r\n", strTime, strError, strMessage);
+            
+            // 超過 14 天刪除檔案
+            if (LogKeepDays > 0)
+            {
+                RemoveLogFiles(LogDirPath, FileName, FileExtensionName, LogKeepDays);
+            }
 
-            string MessageFilePath = LogPath + "\\" + FileName + "_" + DateTime.Now.ToString("yyyyMMdd") + FileExtensionName;
+            // 寫檔案
+            string MessageFilePath = LogDirPath + "\\" + FileName + "_" + DateTime.Now.ToString("yyyyMMdd") + FileExtensionName;
             WriteFile(strText, MessageFilePath);
+        }
+
+        private void RemoveLogFiles(string logDirPath, string fileName, string fileExtensionName, int count)
+        {
+            DirectoryInfo targetDir = new DirectoryInfo(logDirPath);
+
+            var fileInfoList = targetDir.GetFiles(FileName + "_*" + FileExtensionName, SearchOption.TopDirectoryOnly);
+            Array.Sort<FileInfo>(fileInfoList, new NameDateEarlyFirst());
+            var fileInfoCount = fileInfoList.Length;
+
+            foreach (var fileInfo in fileInfoList)
+            {
+                if (fileInfoCount <= count)
+                {
+                    break;
+                }
+
+                fileInfo.Delete();
+                fileInfoCount--;
+            }
         }
 
         /// <summary>

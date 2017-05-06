@@ -12,6 +12,9 @@ namespace KTCommon
 
         #region Event
 
+        /// <summary>
+        /// 訊息事件
+        /// </summary>
         public EventHandler<MessageArgs> OnMessage;
 
         private void TriggerMessageEvent(string message, LogLevelType logLevel)
@@ -29,7 +32,15 @@ namespace KTCommon
 
         #endregion
 
+        /// <summary>
+        /// 開始
+        /// </summary>
+        /// <param name="obj"></param>
         public abstract void Start(object obj);
+
+        /// <summary>
+        /// 停止
+        /// </summary>
         public abstract void Stop();
     }
 }

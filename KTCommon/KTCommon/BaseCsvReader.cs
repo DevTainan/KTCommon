@@ -5,10 +5,20 @@ using System.Text;
 
 namespace KTCommon
 {
+    /// <summary>
+    /// CSV 檔案讀取的基底類別
+    /// </summary>
     public abstract class BaseCsvReader
     {
+        /// <summary>
+        /// 檔案路徑
+        /// </summary>
         public string FilePath { get; private set; }
 
+        /// <summary>
+        /// 建構式
+        /// </summary>
+        /// <param name="filePath">檔案路徑</param>
         public BaseCsvReader(string filePath)
         {
             FilePath = filePath;
@@ -53,8 +63,17 @@ namespace KTCommon
             }
         }
 
+        /// <summary>
+        /// 是否終止
+        /// </summary>
+        /// <param name="txtLineArray"></param>
+        /// <returns></returns>
         protected abstract bool IsBreak(string[] txtLineArray);
 
+        /// <summary>
+        /// 實際處理每一列
+        /// </summary>
+        /// <param name="txtLineArray"></param>
         protected abstract void ProcessLine(string[] txtLineArray);
     }
 }

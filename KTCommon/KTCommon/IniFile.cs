@@ -31,6 +31,9 @@ namespace KTCommon
         #region Members
         private string strIniFile;
 
+        /// <summary>
+        /// 是否存在該檔案
+        /// </summary>
         public bool IsExist
         {
             get { return File.Exists(strIniFile); }
@@ -40,6 +43,11 @@ namespace KTCommon
         /*________________________________________________________________________________*/
         /* PublicMethods */
         #region PublicMethods
+
+        /// <summary>
+        /// 建構式
+        /// </summary>
+        /// <param name="strFile">檔案路徑</param>
         public IniFile(string strFile)
         {
             strIniFile = strFile;
@@ -57,11 +65,24 @@ namespace KTCommon
             }
         }
 
+        /// <summary>
+        /// 寫入
+        /// </summary>
+        /// <param name="Section"></param>
+        /// <param name="Key"></param>
+        /// <param name="Value"></param>
+        /// <returns></returns>
         public bool IniWriteValue(string Section, string Key, string Value)
         {
             return WritePrivateProfileString(Section, Key, Value, this.strIniFile);
         }
 
+        /// <summary>
+        /// 讀取
+        /// </summary>
+        /// <param name="Section"></param>
+        /// <param name="Key"></param>
+        /// <returns></returns>
         public string IniReadValue(string Section, string Key)
         {
             var temp = new StringBuilder(255);

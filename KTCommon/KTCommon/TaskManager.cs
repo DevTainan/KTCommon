@@ -65,6 +65,9 @@ namespace KTCommon
 
         #region Private Method
 
+        /// <summary>
+        /// 初始化 Timer
+        /// </summary>
         private void InitialTimer()
         {
             // Create a timer with a five second interval.  (milliseconds)
@@ -99,12 +102,18 @@ namespace KTCommon
 
         #region Protected Method
 
+        /// <summary>
+        /// 實際處理的方法
+        /// </summary>
         protected abstract void Process();
 
         #endregion
 
         #region Public Method
 
+        /// <summary>
+        /// 開始
+        /// </summary>
         public void Start()
         {
             if (_timer.Enabled == true) // 執行中就不動作
@@ -123,6 +132,9 @@ namespace KTCommon
             thread.Start();
         }
 
+        /// <summary>
+        /// 停止
+        /// </summary>
         public void Stop()
         {
             if (_timer.Enabled == false)
