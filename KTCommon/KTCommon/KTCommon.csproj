@@ -55,6 +55,7 @@
     <Compile Include="SimpleFileLog.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="TaskManagerByThreadingTimer.cs" />
+    <Compile Include="UiTaskManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\csharp.png" />

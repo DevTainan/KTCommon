@@ -36,20 +36,25 @@ namespace KTCommon
             get
             {
                 double milliseconds = _timer.Interval;
-                var timeSpan = TimeSpan.FromMilliseconds(milliseconds);
+                TimeSpan timeSpan = TimeSpan.FromMilliseconds(milliseconds);
                 return Convert.ToInt32(timeSpan.TotalSeconds);
             }
             set
             {
-                var timeSpan = new TimeSpan(0, 0, value);
+                TimeSpan timeSpan = new TimeSpan(0, 0, value);
                 _timer.Interval = timeSpan.TotalMilliseconds;
             }
         }
 
         /// <summary>
-        /// 是否開始執行
+        /// Timer 是否開始執行
         /// </summary>
-        public bool IsRunning { get; private set; }
+        public bool IsTimerEnabled { get { return _timer.Enabled; } }
+
+        /// <summary>
+        /// 是否執行中 (Timer 停止, 可能還在執行中? ex:搬移檔案)
+        /// </summary>
+        public bool IsRunning { get; protected set; }
 
         #endregion
 
@@ -87,11 +92,6 @@ namespace KTCommon
         {
             if (IsRunning == false) // 執行中就不要觸發
             {
-                //TriggerRunningEvent();    //IsRunning = true;
-                ////System.Threading.Thread.Sleep(5000);
-                //CopyDirectory(SourcePath, TargetPath, true);
-                //TriggerCompletedEvent();    //IsRunning = false; 
-
                 IsRunning = true;
                 Process();
                 IsRunning = false;
@@ -106,6 +106,16 @@ namespace KTCommon
         /// 實際處理的方法
         /// </summary>
         protected abstract void Process();
+
+        /// <summary>
+        /// 停止後的額外處理
+        /// </summary>
+        protected virtual void Stopped() { }
+
+        /// <summary>
+        /// 開始前的額外處理
+        /// </summary>
+        protected virtual void OnStart() { }
 
         #endregion
 
@@ -123,13 +133,22 @@ namespace KTCommon
 
             _timer.Enabled = true;
 
+            // 啟動時, 可覆寫的方法
+            OnStart();
+
             // 若是啟動, 需先執行一次動作
-            //OnTimedEvent(this, null);
-            var thread = new System.Threading.Thread(delegate ()
-            {
-                OnTimedEvent(this, null);
-            });
+            System.Threading.ThreadStart threadDelegate = new System.Threading.ThreadStart(TriggerTimedEvent);
+            System.Threading.Thread thread = new System.Threading.Thread(threadDelegate);
+            //System.Threading.Thread thread = new System.Threading.Thread(new delegate
+            //{
+            //    OnTimedEvent(this, null);
+            //});
             thread.Start();
+        }
+        
+        private void TriggerTimedEvent()
+        {
+            OnTimedEvent(this, null);
         }
 
         /// <summary>
@@ -143,6 +162,10 @@ namespace KTCommon
             }
 
             _timer.Enabled = false;
+            IsRunning = false;	//todo: 這邊可以取消? Timer 會處理是否執行中
+
+            // 停止時, 可覆寫的方法
+            Stopped();
         }
 
         #endregion
