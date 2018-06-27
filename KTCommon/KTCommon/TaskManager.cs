@@ -23,6 +23,27 @@ namespace KTCommon
         #region Property
 
         /// <summary>
+        /// Timer 間隔時間 (豪秒)
+        /// </summary>
+        /// <remarks>
+        /// https://msdn.microsoft.com/zh-tw/library/system.timers.timer.interval(v=vs.100).aspx
+        /// 如果間隔是在 Timer 啟動後才設定，計數將重設。 
+        /// 例如，如果您將間隔設定為 5 秒，然後將 Enabled 屬性設定為 true，計數將會在時間設定 Enabled 後啟動。 
+        /// 如果您在計數為 3 秒時將間隔重設為 10 秒，當 Enabled 設定為 true 後的 13 秒，將首次引發 Elapsed 事件。
+        /// </remarks>
+        public double IntervalMillisecondsOfPolling
+        {
+            get
+            {
+                return _timer.Interval;
+            }
+            set
+            {
+                _timer.Interval = value;
+            }
+        }
+
+        /// <summary>
         /// Timer 間隔時間 (秒)
         /// </summary>
         /// <remarks>
