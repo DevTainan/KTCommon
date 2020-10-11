@@ -30,7 +30,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\KTCommon.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
@@ -64,6 +65,14 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y /d  "$(TargetDir)*.*" "$(ProjectDir)nuget\lib\net20\"
+xcopy /y /d  "$(TargetDir)*.*" "$(ProjectDir)nuget\lib\net35\"
+xcopy /y /d  "$(TargetDir)*.*" "$(ProjectDir)nuget\lib\net40\"
+xcopy /y /d  "$(TargetDir)*.*" "$(ProjectDir)nuget\lib\net45\"
+xcopy /y /d  "$(SolutionDir)LICENSE.txt" "$(ProjectDir)nuget\licenses\"
+xcopy /y /d  "$(ProjectDir)images\icon.png" "$(ProjectDir)nuget\licenses\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
