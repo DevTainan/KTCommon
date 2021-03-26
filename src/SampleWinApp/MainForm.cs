@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SampleWinApp.Views;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,12 +29,28 @@ namespace SampleWinApp
 
         private void InitializeMenus()
         {
+            CreateButton(SampleWinAppResources.Language.Test,
+                () => 
+                {
+                    MessageBox.Show(SampleWinAppResources.Language.Hello);
+                });
+
+            CreateButton("KtMmfEventBus",
+                () =>
+                {
+                    splitContainer.Panel2.Controls.Clear();
+                    splitContainer.Panel2.Controls.Add(new KtMmfEventBusPage());
+                });
+        }
+
+        private void CreateButton(string text, Action action)
+        {
             var btn = new Button();
-            btn.Text = SampleWinAppResources.Language.Test;
+            btn.Text = text;
             btn.Dock = DockStyle.Top;
             btn.Click += (object sender, EventArgs e) =>
             {
-                MessageBox.Show(SampleWinAppResources.Language.Hello);
+                action?.Invoke();
             };
 
             splitContainer.Panel1.Controls.Add(btn);

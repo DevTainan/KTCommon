@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KTCommon</RootNamespace>
     <AssemblyName>KTCommon</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -40,8 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IEventBus.cs" />
     <Compile Include="IO\Csv\BaseCsvReader.cs" />
     <Compile Include="Logger\LogEventArgs.cs" />
+    <Compile Include="EventBus\KtMmfEventBus.cs" />
+    <Compile Include="Structures\ExceptionEventArgs.cs" />
+    <Compile Include="Structures\KtTimerPassEventArgs.cs" />
     <Compile Include="Timers\BaseTask.cs" />
     <Compile Include="Core\BusinessLogicException.cs" />
     <Compile Include="Logger\FileLog.cs" />
@@ -56,14 +60,17 @@
     <Compile Include="Security\Security.cs" />
     <Compile Include="Logger\SimpleFileLog.cs" />
     <Compile Include="Core\SysUtils.cs" />
+    <Compile Include="Timers\KtTimer.cs" />
     <Compile Include="Timers\TaskManager.cs" />
     <Compile Include="Timers\TaskManagerByThreadingTimer.cs" />
     <Compile Include="Timers\UiTaskManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="images\csharp.png" />
+    <Content Include="images\icon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="EventBus\SharedMemory\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y /d  "$(TargetDir)*.*" "$(ProjectDir)nuget\lib\net20\"
