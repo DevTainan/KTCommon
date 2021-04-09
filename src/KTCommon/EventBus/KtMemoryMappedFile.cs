@@ -12,7 +12,7 @@ namespace KTCommon.EventBus
     {
         private MemoryMappedFile _mmf;
         private readonly long _size = 512;
-        private static readonly string _mutexName = "KtMemoryMappedFile2";
+        private static readonly string _mutexName = "KtMemoryMappedFile";
         private static Mutex _mutex;
 
         public bool IsConnected { get { return !(_mmf == null || _mmf.SafeMemoryMappedFileHandle.IsClosed); } }
@@ -33,10 +33,11 @@ namespace KTCommon.EventBus
                 return;
             }
 
+            string mutexName = _mutexName + "_" + mapName;
             _mmf = MemoryMappedFile.CreateOrOpen(mapName, _size);
 
             bool mutexCreated = false;
-            _mutex = new Mutex(false, _mutexName, out mutexCreated);
+            _mutex = new Mutex(false, mutexName, out mutexCreated);
 
             if (mutexCreated == false)
             {
@@ -47,7 +48,7 @@ namespace KTCommon.EventBus
                     // MutexRights.Modify), to enter and release the
                     // named mutex.
                     //
-                    _mutex = Mutex.OpenExisting(_mutexName, System.Security.AccessControl.MutexRights.FullControl);
+                    _mutex = Mutex.OpenExisting(mutexName, System.Security.AccessControl.MutexRights.FullControl);
                 }
                 catch (WaitHandleCannotBeOpenedException)
                 {
