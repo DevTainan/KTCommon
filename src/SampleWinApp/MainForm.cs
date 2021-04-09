@@ -41,6 +41,13 @@ namespace SampleWinApp
                     splitContainer.Panel2.Controls.Clear();
                     splitContainer.Panel2.Controls.Add(new KtMmfEventBusPage());
                 });
+
+            CreateButton("KtMemoryMappedFile",
+                () =>
+                {
+                    splitContainer.Panel2.Controls.Clear();
+                    splitContainer.Panel2.Controls.Add(new KtMemoryMappedFilePage());
+                });
         }
 
         private void CreateButton(string text, Action action)

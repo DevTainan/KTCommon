@@ -55,6 +55,12 @@
     <Compile Include="Models\ExtensionMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\KtMemoryMappedFilePage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\KtMemoryMappedFilePage.Designer.cs">
+      <DependentUpon>KtMemoryMappedFilePage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\KtMmfEventBusPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -73,6 +79,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Views\KtMemoryMappedFilePage.resx">
+      <DependentUpon>KtMemoryMappedFilePage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\KtMmfEventBusPage.resx">
       <DependentUpon>KtMmfEventBusPage.cs</DependentUpon>
     </EmbeddedResource>
