@@ -55,6 +55,12 @@
     <Compile Include="Models\ExtensionMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\AsynchronousSocketPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\AsynchronousSocketPage.Designer.cs">
+      <DependentUpon>AsynchronousSocketPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\KtMemoryMappedFilePage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -79,6 +85,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Views\AsynchronousSocketPage.resx">
+      <DependentUpon>AsynchronousSocketPage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\KtMemoryMappedFilePage.resx">
       <DependentUpon>KtMemoryMappedFilePage.cs</DependentUpon>
     </EmbeddedResource>

@@ -84,16 +84,14 @@ namespace KTCommon.EventBus
             {
                 //bool mutexCreated = false;
                 //using (Mutex mutex = new Mutex(true, "KtMemoryMappedFile", out mutexCreated))
-                _mutex.WaitOne();
-                {
+                //{
+                    _mutex.WaitOne();
                     using (MemoryMappedViewStream stream = _mmf.CreateViewStream(0, _size))
                     {
                         BinaryWriter writer = new BinaryWriter(stream);
                         writer.Write(content);
                     }
-
-                    //mutex.ReleaseMutex();
-                }
+                //}
             }
             finally
             {
@@ -109,12 +107,22 @@ namespace KTCommon.EventBus
             }
 
             string content = null;
-            using (MemoryMappedViewStream stream = _mmf.CreateViewStream(0, _size))
+
+            try
             {
-                using (var reader = new BinaryReader(stream))
+
+                _mutex.WaitOne();
+                using (MemoryMappedViewStream stream = _mmf.CreateViewStream(0, _size))
                 {
-                    content = reader.ReadString();
+                    using (var reader = new BinaryReader(stream))
+                    {
+                        content = reader.ReadString();
+                    }
                 }
+            }
+            finally
+            {
+                _mutex.ReleaseMutex();
             }
 
             return content;

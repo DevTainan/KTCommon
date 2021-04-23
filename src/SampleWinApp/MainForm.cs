@@ -48,6 +48,13 @@ namespace SampleWinApp
                     splitContainer.Panel2.Controls.Clear();
                     splitContainer.Panel2.Controls.Add(new KtMemoryMappedFilePage());
                 });
+
+            CreateButton("AsynchronousSocket",
+                () =>
+                {
+                    splitContainer.Panel2.Controls.Clear();
+                    splitContainer.Panel2.Controls.Add(new AsynchronousSocketPage());
+                });
         }
 
         private void CreateButton(string text, Action action)
