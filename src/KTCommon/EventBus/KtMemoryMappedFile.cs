@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace KTCommon.EventBus
 {
-    public class KtMemoryMappedFile
+    public class KtMemoryMappedFile : IDisposable
     {
         private MemoryMappedFile _mmf;
         private readonly long _size = 512;
@@ -106,17 +106,14 @@ namespace KTCommon.EventBus
                 return null;
             }
 
-            string content = null;
-
             try
             {
-
                 _mutex.WaitOne();
                 using (MemoryMappedViewStream stream = _mmf.CreateViewStream(0, _size))
                 {
                     using (var reader = new BinaryReader(stream))
                     {
-                        content = reader.ReadString();
+                        return reader.ReadString();
                     }
                 }
             }
@@ -124,8 +121,6 @@ namespace KTCommon.EventBus
             {
                 _mutex.ReleaseMutex();
             }
-
-            return content;
         }
 
         #region IDisposable

@@ -13,7 +13,11 @@ namespace KTCommon.EventBus
 {
     public class KtSingleEventBus : IEventBus
     {
+        private object _lockOfMessage = new object();
+        private object _lockOfIsConnected = new object();
         private Socket _socket;
+        private byte[] cv_RecevieBuffer = new byte[65536];
+
         private string _ip = "127.0.0.1";
         public string IP
         {
@@ -79,12 +83,16 @@ namespace KTCommon.EventBus
             }
         }
 
+        private KtTimer cv_SocketProcessTimer;
+        private KtTimer cv_DataProcessTimer;
+        private KtTimer cv_EventProcessTimer;
+
         public event EventHandler<EventBusMessageEventArgs> MessageReceived;
         public event EventHandler<ExceptionEventArgs> TransactionError;
 
         public KtSingleEventBus()
         {
-            var timer = new KtTimer(300, new Action(OnSocketProcess));
+            this.cv_SocketProcessTimer = new KtTimer(300, new Action(OnSocketProcess));
         }
 
         private void OnSocketProcess()
@@ -127,13 +135,27 @@ namespace KTCommon.EventBus
                 return;
             }
             this.ProcessConnectionEvent();
-            //this.ReadSocketData();
+            this.ReadSocketData();
             //this.cv_SocketProcessTimer.SetEvent();
         }
 
         public void Connect()
         {
-            throw new NotImplementedException();
+            lock (_lockOfIsConnected)
+            {
+                try
+                {
+                    if (!IsConnected && !IsOpen)
+                    {
+                        IsOpen = true;
+                    }
+                    //this.cv_SocketProcessTimer.SetEvent();
+                    //this.cv_DataProcessTimer.SetEvent();
+                }
+                catch
+                {
+                }
+            }
         }
 
         public void Disconnect()
@@ -150,7 +172,6 @@ namespace KTCommon.EventBus
         {
             throw new NotImplementedException();
         }
-
 
 
         private bool CheckSocketConnection()
@@ -202,30 +223,30 @@ namespace KTCommon.EventBus
 
         private void ProcessConnectionEvent()
         {
-            //bool connected = false;
-            //if (this.cv_Socket != null)
+            bool connected = false;
+            if (_socket != null)
+            {
+                connected = _socket.Connected;
+            }
+            if (!connected)
+            {
+                try
+                {
+                    if (_socket != null)
+                    {
+                        _socket.Close();
+                        _socket = null;
+                        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    }
+                }
+                catch
+                {
+                }
+            }
+            //if (IsConnected && !connected)
             //{
-            //    connected = this.cv_Socket.get_Connected();
-            //}
-            //if (!connected)
-            //{
-            //    try
-            //    {
-            //        if (this.cv_Socket != null)
-            //        {
-            //            this.cv_Socket.Close();
-            //            this.cv_Socket = null;
-            //            this.cv_Socket = new Socket(2, 1, 6);
-            //        }
-            //    }
-            //    catch
-            //    {
-            //    }
-            //}
-            //if (this.cv_IsConnected && !connected)
-            //{
-            //    this.cv_IsConnected = false;
-            //    this.WriteTxLog("Disconnected!");
+            //    IsConnected = false;
+            //    //this.WriteTxLog("Disconnected!");
             //    KSingleEventBus.EventItem eventItem = new KSingleEventBus.EventItem()
             //    {
             //        Ticket = 0,
@@ -234,10 +255,10 @@ namespace KTCommon.EventBus
             //    this.AddEventItem(eventItem);
             //    return;
             //}
-            //if (!this.cv_IsConnected && connected)
+            //if (!IsConnected && connected)
             //{
-            //    this.cv_IsConnected = true;
-            //    this.WriteTxLog("Connected!");
+            //    IsConnected = true;
+            //    //this.WriteTxLog("Connected!");
             //    KSingleEventBus.EventItem eventItem1 = new KSingleEventBus.EventItem()
             //    {
             //        Ticket = 0,
@@ -245,6 +266,67 @@ namespace KTCommon.EventBus
             //    };
             //    this.AddEventItem(eventItem1);
             //}
+        }
+
+        private void ReadSocketData()
+        {
+            if (_socket == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (_socket.Connected)
+                {
+                    while (_socket.Poll(0, 0) && _socket.Available > 0)
+                    {
+                        int num = _socket.Receive(this.cv_RecevieBuffer);
+                        if (num <= 0)
+                        {
+                            break;
+                        }
+                        this.OnReceiveData(this.cv_RecevieBuffer, num);
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void OnReceiveData(byte[] m_Buffer, int m_BufferSize)
+        {
+            if (m_BufferSize <= 0)
+            {
+                return;
+            }
+            //if (this.cv_LogTransaction)
+            //{
+            //    this.WriteTxLog(string.Concat("Recv Binary: ", SysUtils.ToString(m_BufferSize)));
+            //}
+            //if (this.cv_LogTransaction && this.cv_LogBinary)
+            //{
+            //    string hex = SysUtils.BinaryToHex(m_Buffer, m_BufferSize);
+            //    this.WriteTxLog("Recv:");
+            //    this.WriteTxLog(hex);
+            //}
+            lock (_lockOfMessage)
+            {
+
+            }
+            //this.cv_ReadStreamCs.Enter();
+            //try
+            //{
+            //    long position = this.cv_ReadStream.Position;
+            //    this.cv_ReadStream.Seek(0, 2);
+            //    this.cv_ReadStream.Write(m_Buffer, m_BufferSize);
+            //    this.cv_ReadStream.Position = position;
+            //}
+            //catch
+            //{
+            //}
+            //this.cv_ReadStreamCs.Leave();
         }
     }
 }

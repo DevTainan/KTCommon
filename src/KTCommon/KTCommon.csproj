@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\FileHelper.cs" />
     <Compile Include="EventBus\KtMemoryMappedFile.cs" />
     <Compile Include="EventBus\KtSingleEventBus.cs" />
     <Compile Include="Interfaces\ISocket.cs" />
