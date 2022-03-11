@@ -55,6 +55,13 @@ namespace SampleWinApp
                     splitContainer.Panel2.Controls.Clear();
                     splitContainer.Panel2.Controls.Add(new AsynchronousSocketPage());
                 });
+
+            CreateButton("KtTcpTransfer",
+                () =>
+                {
+                    splitContainer.Panel2.Controls.Clear();
+                    splitContainer.Panel2.Controls.Add(new KtTcpTransferPage());
+                });
         }
 
         private void CreateButton(string text, Action action)

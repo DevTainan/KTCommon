@@ -45,8 +45,10 @@
     <Compile Include="EventBus\KtSingleEventBus.cs" />
     <Compile Include="Interfaces\ISocket.cs" />
     <Compile Include="Interfaces\IEventBus.cs" />
+    <Compile Include="Interfaces\ITcpTransfer.cs" />
     <Compile Include="Internet\AsynchronousSocketClient.cs" />
     <Compile Include="Internet\AsynchronousSocketServer.cs" />
+    <Compile Include="Internet\KtTcpTransfer.cs" />
     <Compile Include="IO\Csv\BaseCsvReader.cs" />
     <Compile Include="Logger\LogEventArgs.cs" />
     <Compile Include="EventBus\KtMmfEventBus.cs" />

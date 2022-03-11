@@ -67,6 +67,12 @@
     <Compile Include="Views\KtMemoryMappedFilePage.Designer.cs">
       <DependentUpon>KtMemoryMappedFilePage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\KtTcpTransferPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\KtTcpTransferPage.Designer.cs">
+      <DependentUpon>KtTcpTransferPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\KtMmfEventBusPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -90,6 +96,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\KtMemoryMappedFilePage.resx">
       <DependentUpon>KtMemoryMappedFilePage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\KtTcpTransferPage.resx">
+      <DependentUpon>KtTcpTransferPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\KtMmfEventBusPage.resx">
       <DependentUpon>KtMmfEventBusPage.cs</DependentUpon>
