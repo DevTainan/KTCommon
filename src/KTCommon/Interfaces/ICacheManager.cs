@@ -3,6 +3,6 @@
     public interface ICacheManager
     {
         void Set(string key, object value);
-        object Get(string key);
+        T Get<T>(string key);
     }
 }

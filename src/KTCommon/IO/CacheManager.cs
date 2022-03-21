@@ -39,8 +39,8 @@ namespace KTCommon.IO
             _cache.Set(key, value, policy);
         }
 
-        // 讀取快取, 若沒有資料, 再讀取檔案
-        public object Get(string key)
+        // 讀取快取, 若沒有資料, 
+        public T Get<T>(string key)
         {
             object obj = _cache.Get(key);
 
@@ -50,11 +50,11 @@ namespace KTCommon.IO
                 if (File.Exists(filePath))
                 {
                     string text = File.ReadAllText(filePath);
-                    obj = ConvertToObj(text);
+                    obj = ConvertToObj<T>(text);
                 }
             }
 
-            return obj;
+            return (T)obj;
         }
 
         private string ConvertToText(object value)
@@ -63,10 +63,10 @@ namespace KTCommon.IO
             return _serializer(cacheData);
         }
 
-        private object ConvertToObj(string text)
+        private T ConvertToObj<T>(string text)
         {
             var cacheData = (CacheData)_deserializer(text, typeof(CacheData));
-            return _deserializer(cacheData.Content, typeof(object));
+            return (T)_deserializer(cacheData.Content, typeof(T));
         }
 
         internal struct CacheData
