@@ -50,6 +50,11 @@ namespace KTCommon.IO
                 if (File.Exists(filePath))
                 {
                     string text = File.ReadAllText(filePath);
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        throw new ArgumentNullException(nameof(text), $"The content is null or empty, path: {filePath}");
+                    }
+
                     obj = ConvertToObj<T>(text);
                 }
             }
@@ -71,8 +76,8 @@ namespace KTCommon.IO
 
         internal struct CacheData
         {
-            public DateTime Timetag { get; private set; }
-            public string Content { get; private set; }
+            public DateTime Timetag { get; set; }
+            public string Content { get; set; }
 
             public CacheData(DateTime timetag, string content)
             {
