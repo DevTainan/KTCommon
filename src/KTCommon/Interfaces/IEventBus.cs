@@ -1,7 +1,5 @@
 ﻿using KTCommon.Structures;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace KTCommon.Interfaces
 {
