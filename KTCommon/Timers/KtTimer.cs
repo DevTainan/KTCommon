@@ -1,10 +1,11 @@
-﻿using KTCommon.Structures;
+﻿using KTCommon.Interfaces;
+using KTCommon.Structures;
 using System;
 using System.Timers;
 
 namespace KTCommon.Timers
 {
-    internal class KtTimer
+    internal class KtTimer : ITimer
     {
         private Timer _timer;
         private Action[] _actions;

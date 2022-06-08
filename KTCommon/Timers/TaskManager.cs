@@ -1,7 +1,4 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Text;
 using System.Timers;
 
 namespace KTCommon.Timers

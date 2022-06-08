@@ -3,14 +3,11 @@ using System;
 
 namespace KTCommon.Interfaces
 {
-    public interface IEventBus : IDisposable
+    public interface IEventBus : IConnect, IDisposable
     {
         event EventHandler<EventBusMessageEventArgs> MessageReceived;
         event EventHandler<ExceptionEventArgs> TransactionError;
 
-        bool IsConnected { get; }
-        void Connect();
-        void Disconnect();
         void Send(string channelId, string messageId, string content);
     }
 

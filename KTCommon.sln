@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KTCommon", "src\KTCommon\KTCommon.csproj", "{9F939E00-D29C-4BF6-A151-FC4762EDB7FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KTCommon", "KTCommon\KTCommon.csproj", "{9F939E00-D29C-4BF6-A151-FC4762EDB7FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{950D49BE-A2E1-41FA-A12E-44AE44F8C6B5}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,11 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorials", "src\Tutorials\Tutorials.csproj", "{34ACBE54-2185-41D5-B12A-83F7EAA312A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tutorials", "Tutorials\Tutorials.csproj", "{34ACBE54-2185-41D5-B12A-83F7EAA312A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWinApp", "src\SampleWinApp\SampleWinApp.csproj", "{EC1D91F1-AF52-4226-9E1E-EDFADC38ED76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWinApp", "SampleWinApp\SampleWinApp.csproj", "{EC1D91F1-AF52-4226-9E1E-EDFADC38ED76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWinAppResources", "src\SampleWinAppResources\SampleWinAppResources.csproj", "{A3679443-29A4-4EB9-9817-F5A36DDF311F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWinAppResources", "SampleWinAppResources\SampleWinAppResources.csproj", "{A3679443-29A4-4EB9-9817-F5A36DDF311F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KTCommonTests", "KTCommonTests\KTCommonTests.csproj", "{EFB99538-69C6-4E2E-8847-5BE9E4F66C8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +42,10 @@ Global
 		{A3679443-29A4-4EB9-9817-F5A36DDF311F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3679443-29A4-4EB9-9817-F5A36DDF311F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3679443-29A4-4EB9-9817-F5A36DDF311F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFB99538-69C6-4E2E-8847-5BE9E4F66C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFB99538-69C6-4E2E-8847-5BE9E4F66C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFB99538-69C6-4E2E-8847-5BE9E4F66C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFB99538-69C6-4E2E-8847-5BE9E4F66C8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

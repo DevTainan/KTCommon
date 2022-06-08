@@ -46,6 +46,7 @@ namespace KTCommon.EventBus
 
         #region Event
 
+        public event EventHandler<ConnectionStatusEventArgs> ConnectionStatus;
         public event EventHandler<EventBusMessageEventArgs> MessageReceived;
         public event EventHandler<ExceptionEventArgs> TransactionError;
 
@@ -54,6 +55,14 @@ namespace KTCommon.EventBus
         public KtMmfEventBus()
         {
             _timer = new KtTimer(double.Epsilon, ReceiveData);
+            _timer.Starting += (object sender, EventArgs e) =>
+            {
+                ConnectionStatus?.Invoke(this, new ConnectionStatusEventArgs(true));
+            };
+            _timer.Stopped += (object sender, EventArgs e) =>
+            {
+                ConnectionStatus?.Invoke(this, new ConnectionStatusEventArgs(false));
+            };
             _timer.Error += (object sender, ExceptionEventArgs e) =>
             {
                 TransactionError?.Invoke(this, e);

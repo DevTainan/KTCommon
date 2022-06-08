@@ -87,6 +87,7 @@ namespace KTCommon.EventBus
         private KtTimer cv_DataProcessTimer;
         private KtTimer cv_EventProcessTimer;
 
+        public event EventHandler<ConnectionStatusEventArgs> ConnectionStatus;
         public event EventHandler<EventBusMessageEventArgs> MessageReceived;
         public event EventHandler<ExceptionEventArgs> TransactionError;
 
