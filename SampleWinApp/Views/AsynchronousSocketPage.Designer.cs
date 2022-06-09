@@ -42,20 +42,24 @@
             this.lblSystemStatus = new System.Windows.Forms.Label();
             this.lblIPAddress = new System.Windows.Forms.Label();
             this.btnDisconnect = new System.Windows.Forms.Button();
-            this.btnConnect = new System.Windows.Forms.Button();
             this.btnInit = new System.Windows.Forms.Button();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.grpTransactionError = new System.Windows.Forms.GroupBox();
+            this.txtError = new System.Windows.Forms.TextBox();
+            this.lblTransactionError = new System.Windows.Forms.Label();
             this.grpMessageReceived.SuspendLayout();
             this.grpMessageSending.SuspendLayout();
             this.grpConnect.SuspendLayout();
+            this.grpTransactionError.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpMessageReceived
             // 
             this.grpMessageReceived.Controls.Add(this.txtMsgReceived);
             this.grpMessageReceived.Controls.Add(this.lblMsgReceived);
-            this.grpMessageReceived.Location = new System.Drawing.Point(3, 311);
+            this.grpMessageReceived.Location = new System.Drawing.Point(5, 255);
             this.grpMessageReceived.Name = "grpMessageReceived";
-            this.grpMessageReceived.Size = new System.Drawing.Size(385, 185);
+            this.grpMessageReceived.Size = new System.Drawing.Size(385, 104);
             this.grpMessageReceived.TabIndex = 65;
             this.grpMessageReceived.TabStop = false;
             this.grpMessageReceived.Text = "Message Received";
@@ -65,7 +69,7 @@
             this.txtMsgReceived.Location = new System.Drawing.Point(86, 21);
             this.txtMsgReceived.Multiline = true;
             this.txtMsgReceived.Name = "txtMsgReceived";
-            this.txtMsgReceived.Size = new System.Drawing.Size(291, 129);
+            this.txtMsgReceived.Size = new System.Drawing.Size(291, 72);
             this.txtMsgReceived.TabIndex = 64;
             // 
             // lblMsgReceived
@@ -84,7 +88,7 @@
             this.grpMessageSending.Controls.Add(this.btnSet);
             this.grpMessageSending.Location = new System.Drawing.Point(3, 120);
             this.grpMessageSending.Name = "grpMessageSending";
-            this.grpMessageSending.Size = new System.Drawing.Size(385, 185);
+            this.grpMessageSending.Size = new System.Drawing.Size(385, 129);
             this.grpMessageSending.TabIndex = 66;
             this.grpMessageSending.TabStop = false;
             this.grpMessageSending.Text = "Message Sending";
@@ -94,7 +98,7 @@
             this.txtContent.Location = new System.Drawing.Point(86, 21);
             this.txtContent.Multiline = true;
             this.txtContent.Name = "txtContent";
-            this.txtContent.Size = new System.Drawing.Size(291, 122);
+            this.txtContent.Size = new System.Drawing.Size(291, 72);
             this.txtContent.TabIndex = 64;
             this.txtContent.Text = "Hello World~!";
             // 
@@ -109,7 +113,7 @@
             // 
             // btnSet
             // 
-            this.btnSet.Location = new System.Drawing.Point(278, 149);
+            this.btnSet.Location = new System.Drawing.Point(270, 99);
             this.btnSet.Name = "btnSet";
             this.btnSet.Size = new System.Drawing.Size(107, 23);
             this.btnSet.TabIndex = 62;
@@ -195,16 +199,6 @@
             this.btnDisconnect.UseVisualStyleBackColor = true;
             this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
             // 
-            // btnConnect
-            // 
-            this.btnConnect.Location = new System.Drawing.Point(179, 81);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(107, 23);
-            this.btnConnect.TabIndex = 62;
-            this.btnConnect.Text = "&Connect";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
-            // 
             // btnInit
             // 
             this.btnInit.Location = new System.Drawing.Point(295, 53);
@@ -215,10 +209,49 @@
             this.btnInit.UseVisualStyleBackColor = true;
             this.btnInit.Click += new System.EventHandler(this.btnInit_Click);
             // 
+            // btnConnect
+            // 
+            this.btnConnect.Location = new System.Drawing.Point(179, 81);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(107, 23);
+            this.btnConnect.TabIndex = 62;
+            this.btnConnect.Text = "&Connect";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            // 
+            // grpTransactionError
+            // 
+            this.grpTransactionError.Controls.Add(this.txtError);
+            this.grpTransactionError.Controls.Add(this.lblTransactionError);
+            this.grpTransactionError.Location = new System.Drawing.Point(5, 365);
+            this.grpTransactionError.Name = "grpTransactionError";
+            this.grpTransactionError.Size = new System.Drawing.Size(385, 104);
+            this.grpTransactionError.TabIndex = 65;
+            this.grpTransactionError.TabStop = false;
+            this.grpTransactionError.Text = "Transaction Error";
+            // 
+            // txtError
+            // 
+            this.txtError.Location = new System.Drawing.Point(86, 21);
+            this.txtError.Multiline = true;
+            this.txtError.Name = "txtError";
+            this.txtError.Size = new System.Drawing.Size(291, 72);
+            this.txtError.TabIndex = 64;
+            // 
+            // lblTransactionError
+            // 
+            this.lblTransactionError.AutoSize = true;
+            this.lblTransactionError.Location = new System.Drawing.Point(44, 24);
+            this.lblTransactionError.Name = "lblTransactionError";
+            this.lblTransactionError.Size = new System.Drawing.Size(30, 12);
+            this.lblTransactionError.TabIndex = 63;
+            this.lblTransactionError.Text = "Error";
+            // 
             // AsynchronousSocketPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.grpTransactionError);
             this.Controls.Add(this.grpMessageReceived);
             this.Controls.Add(this.grpMessageSending);
             this.Controls.Add(this.grpConnect);
@@ -230,6 +263,8 @@
             this.grpMessageSending.PerformLayout();
             this.grpConnect.ResumeLayout(false);
             this.grpConnect.PerformLayout();
+            this.grpTransactionError.ResumeLayout(false);
+            this.grpTransactionError.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -252,5 +287,8 @@
         private System.Windows.Forms.RadioButton rdoSocketOfClient;
         private System.Windows.Forms.RadioButton rdoSocketOfServer;
         private System.Windows.Forms.Button btnInit;
+        private System.Windows.Forms.GroupBox grpTransactionError;
+        private System.Windows.Forms.TextBox txtError;
+        private System.Windows.Forms.Label lblTransactionError;
     }
 }

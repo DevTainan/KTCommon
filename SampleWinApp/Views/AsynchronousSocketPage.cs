@@ -39,12 +39,20 @@ namespace SampleWinApp.Views
                 return;
             }
 
-            txtContent.Text = e.Content;
+            txtMsgReceived.Text = e.Content;
         }
 
         private void OnTransactionError(object sender, ExceptionEventArgs e)
         {
-            MessageBox.Show(e.Ex.ToString());
+            //MessageBox.Show(e.Ex.ToString());
+
+            if (txtError.InvokeRequired)
+            {
+                txtError.Invoke(new EventHandler<ExceptionEventArgs>(OnTransactionError), sender, e);
+                return;
+            }
+
+            txtError.Text = e.Ex.ToString();
         }
 
         private void btnInit_Click(object sender, EventArgs e)

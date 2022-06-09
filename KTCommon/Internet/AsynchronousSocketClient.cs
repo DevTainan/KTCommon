@@ -21,15 +21,12 @@ namespace KTCommon.Internet
         private Socket _client;
 
         // ManualResetEvent instances signal completion.  
-        private static ManualResetEvent connectDone =
-            new ManualResetEvent(false);
-        private static ManualResetEvent sendDone =
-            new ManualResetEvent(false);
-        private static ManualResetEvent receiveDone =
-            new ManualResetEvent(false);
+        private static ManualResetEvent connectDone = new ManualResetEvent(false);
+        //private static ManualResetEvent sendDone = new ManualResetEvent(false);
+        private static ManualResetEvent receiveDone = new ManualResetEvent(false);
 
         // The response from the remote device.  
-        private static String response = String.Empty;
+        private static string response = string.Empty;
 
 
         public bool IsConnected { get; set; }
@@ -87,8 +84,9 @@ namespace KTCommon.Internet
                 //sendDone.WaitOne();
 
                 //// Receive the response from the remote device.  
-                //Receive(client);
+                //Receive(_client);
                 //receiveDone.WaitOne();
+                System.Threading.Tasks.Task.Factory.StartNew(StartReceiving);
 
                 //// Write the response to the console.  
                 //Console.WriteLine("Response received : {0}", response);
@@ -122,12 +120,13 @@ namespace KTCommon.Internet
         {
             // Send test data to the remote device.  
             //Send(_client, "This is a test<EOF>");
+            //sendDone.Reset();
             Send(_client, content);
-            sendDone.WaitOne();
+            //sendDone.WaitOne();
 
-            // Receive the response from the remote device.  
-            Receive(_client);
-            receiveDone.WaitOne();
+            //// Receive the response from the remote device.  
+            //Receive(_client);
+            //receiveDone.WaitOne();
         }
 
         private void ConnectCallback(IAsyncResult ar)
@@ -140,34 +139,48 @@ namespace KTCommon.Internet
                 // Complete the connection.  
                 client.EndConnect(ar);
 
+                // Signal that the connection has been made.  
+                connectDone.Set();
+
                 //Console.WriteLine("Socket connected to {0}",
                 //    client.RemoteEndPoint.ToString());
                 TriggerConnectionStatus(true);
-
+            }
+            catch (Exception ex)
+            {
                 // Signal that the connection has been made.  
                 connectDone.Set();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
+
+                //Console.WriteLine(ex.ToString());
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
             }
         }
 
-        private void Receive(Socket client)
+        private void StartReceiving()
         {
-            try
+            while (IsConnected)
             {
-                // Create the state object.  
-                StateObject state = new StateObject();
-                state.workSocket = client;
+                // Set the event to nonsignaled state.  
+                receiveDone.Reset();
 
-                // Begin receiving the data from the remote device.  
-                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    new AsyncCallback(ReceiveCallback), state);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
+                // Receive the response from the remote device.  
+                try
+                {
+                    // Create the state object.  
+                    StateObject state = new StateObject();
+                    state.workSocket = _client;
+
+                    // Begin receiving the data from the remote device.  
+                    _client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                        new AsyncCallback(ReceiveCallback), state);
+                }
+                catch (Exception ex)
+                {
+                    //Console.WriteLine(ex.ToString());
+                    TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
+                }
+
+                receiveDone.WaitOne();
             }
         }
 
@@ -180,6 +193,14 @@ namespace KTCommon.Internet
                 StateObject state = (StateObject)ar.AsyncState;
                 Socket client = state.workSocket;
 
+                // 斷線時, 也會觸發此事件
+                if (client.Connected == false)
+                {
+                    receiveDone.Set();
+                    //MessageReceived?.Invoke(this, new SocketMessageEventArgs("Disconnected"));
+                    return;
+                }
+
                 // Read data from the remote device.  
                 int bytesRead = client.EndReceive(ar);
 
@@ -188,40 +209,43 @@ namespace KTCommon.Internet
                     // There might be more data, so store the data received so far.  
                     state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
 
-                    // Get the rest of the data.  
-                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                        new AsyncCallback(ReceiveCallback), state);
-                }
-                else
-                {
-                    // All the data has arrived; put it in response.  
-                    if (state.sb.Length > 1)
+                    // Check for end-of-file tag. If it is not there, read
+                    // more data.  
+                    response = state.sb.ToString();
+                    if (response.IndexOf("<EOF>") > -1)
                     {
-                        response = state.sb.ToString();
+                        // Signal that all bytes have been received.  
+                        receiveDone.Set();
 
+                        //// All the data has been read from the
+                        //// client. Display it on the console.  
                         MessageReceived?.Invoke(this, new SocketMessageEventArgs(response));
                     }
-                    // Signal that all bytes have been received.  
-                    receiveDone.Set();
+                    else
+                    {
+                        // Get the rest of the data.  
+                        client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                            new AsyncCallback(ReceiveCallback), state);
+                    }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
             }
         }
 
-        private static void Send(Socket client, String data)
+        private void Send(Socket client, string data)
         {
             // Convert the string data to byte data using ASCII encoding.  
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
+            byte[] byteData = Encoding.ASCII.GetBytes(data + "<EOF>");
 
             // Begin sending the data to the remote device.  
             client.BeginSend(byteData, 0, byteData.Length, 0,
                 new AsyncCallback(SendCallback), client);
         }
 
-        private static void SendCallback(IAsyncResult ar)
+        private void SendCallback(IAsyncResult ar)
         {
             try
             {
@@ -233,11 +257,12 @@ namespace KTCommon.Internet
                 //Console.WriteLine("Sent {0} bytes to server.", bytesSent);
 
                 // Signal that all bytes have been sent.  
-                sendDone.Set();
+                //sendDone.Set();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(ex.ToString());
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
             }
         }
 

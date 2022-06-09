@@ -19,13 +19,15 @@ namespace KTCommon.Internet
         private ConcurrentDictionary<string, Socket> _clients =
             new ConcurrentDictionary<string, Socket>(StringComparer.OrdinalIgnoreCase);
 
+        private string _ip = "127.0.0.1";
         // The port number for the remote device.  
         private int _port = 11000;
 
         private Socket _listener;
 
         // Thread signal.  
-        private static ManualResetEvent allDone = new ManualResetEvent(false);
+        private static ManualResetEvent connectDone = new ManualResetEvent(false);
+        private static ManualResetEvent receiveDone = new ManualResetEvent(false);
 
         public bool IsListening { get; protected set; }
         public bool IsConnected { get { return _listener != null && _listener.Connected; } }
@@ -47,6 +49,7 @@ namespace KTCommon.Internet
 
         public void SetConnection(string ip, int port)
         {
+            //_ip = ip;   // 無效參數
             _port = port;
         }
 
@@ -60,7 +63,8 @@ namespace KTCommon.Internet
             // Establish the local endpoint for the socket.  
             // The DNS name of the computer  
             // running the listener is "host.contoso.com".  
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            IPHostEntry ipHostInfo = Dns.GetHostEntry(_ip);
+            //IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, _port);
 
@@ -78,14 +82,14 @@ namespace KTCommon.Internet
 
                 Task.Factory.StartNew(StartListing);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(ex.ToString());
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
             }
 
             //Console.WriteLine("\nPress ENTER to continue...");
             //Console.Read();
-
         }
 
         private void StartListing()
@@ -93,7 +97,7 @@ namespace KTCommon.Internet
             while (IsListening)
             {
                 // Set the event to nonsignaled state.  
-                allDone.Reset();
+                connectDone.Reset();
 
                 // Start an asynchronous socket to listen for connections.  
                 Console.WriteLine("Waiting for a connection...");
@@ -102,80 +106,134 @@ namespace KTCommon.Internet
                     _listener);
 
                 // Wait until a connection is made before continuing.  
-                allDone.WaitOne();
+                connectDone.WaitOne();
             }
         }
 
         private void AcceptCallback(IAsyncResult ar)
         {
-            // Signal the main thread to continue.  
-            allDone.Set();
-
-            // Get the socket that handles the client request.  
-            Socket listener = (Socket)ar.AsyncState;
-
-            Socket handler = listener.EndAccept(ar);
-
-            // 加入 Client 清單
-            _clients.TryAdd(handler.LocalEndPoint.ToString(), handler);
-
-            // Create the state object.  
-            StateObject state = new StateObject();
-            state.workSocket = handler;
-            handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ReadCallback), state);
-        }
-
-        private void ReadCallback(IAsyncResult ar)
-        {
-            String content = String.Empty;
-
-            // Retrieve the state object and the handler socket  
-            // from the asynchronous state object.  
-            StateObject state = (StateObject)ar.AsyncState;
-            Socket handler = state.workSocket;
-
-            // Read data from the client socket.
-            int bytesRead = handler.EndReceive(ar);
-
-            if (bytesRead > 0)
+            try
             {
-                // There  might be more data, so store the data received so far.  
-                state.sb.Append(Encoding.ASCII.GetString(
-                    state.buffer, 0, bytesRead));
+                // Signal the main thread to continue.  
+                connectDone.Set();
 
-                // Check for end-of-file tag. If it is not there, read
-                // more data.  
-                content = state.sb.ToString();
-                if (content.IndexOf("<EOF>") > -1)
-                {
-                    // All the data has been read from the
-                    // client. Display it on the console.  
-                    Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                        content.Length, content);
-                    // Echo the data back to the client.  
-                    Send(handler, content);
-                }
-                else
-                {
-                    // Not all data received. Get more.  
-                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    new AsyncCallback(ReadCallback), state);
-                }
+                // Get the socket that handles the client request.  
+                Socket listener = (Socket)ar.AsyncState;
+
+                Socket handler = listener.EndAccept(ar);
+
+                // 加入 Client 清單
+                Socket socket = null;
+                _clients.TryRemove(handler.LocalEndPoint.ToString(), out socket);
+                _clients.TryAdd(handler.LocalEndPoint.ToString(), handler);
+
+                // Create the state object.  
+                //StateObject state = new StateObject();
+                //state.workSocket = handler;
+                //handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                //    new AsyncCallback(ReadCallback), state);
+                StartReceiving(handler);
+            }
+            catch (ObjectDisposedException)
+            {
+                // 順利關閉
+            }
+            catch (Exception ex)
+            {
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
             }
         }
 
-        private static void Send(Socket handler, String data)
+
+        private void StartReceiving(Socket handler)
+        {
+            while (IsListening)
+            {
+                // Set the event to nonsignaled state.  
+                receiveDone.Reset();
+
+                // Receive the response from the remote device.  
+                try
+                {
+                    // Create the state object.  
+                    StateObject state = new StateObject();
+                    state.workSocket = handler;
+
+                    // Begin receiving the data from the remote device.  
+                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                        new AsyncCallback(ReceiveCallback), state);
+                }
+                catch (Exception ex)
+                {
+                    //Console.WriteLine(ex.ToString());
+                    TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
+                }
+
+                receiveDone.WaitOne();
+            }
+        }
+
+        private void ReceiveCallback(IAsyncResult ar)
+        {
+            try
+            {
+                string content = string.Empty;
+
+                // Retrieve the state object and the handler socket  
+                // from the asynchronous state object.  
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket handler = state.workSocket;
+
+                // Read data from the client socket.
+                int bytesRead = handler.EndReceive(ar);
+
+                if (bytesRead > 0)
+                {
+                    // There  might be more data, so store the data received so far.  
+                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+
+                    // Check for end-of-file tag. If it is not there, read
+                    // more data.  
+                    content = state.sb.ToString();
+                    if (content.IndexOf("<EOF>") > -1)
+                    {
+                        // Signal that all bytes have been received.  
+                        receiveDone.Set();
+
+                        //// All the data has been read from the
+                        //// client. Display it on the console.  
+                        //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                        //    content.Length, content);
+                        //// Echo the data back to the client.  
+                        //Send(handler, content);
+                        //Send(handler, "received");
+                        MessageReceived?.Invoke(this, new SocketMessageEventArgs(content));
+                    }
+                    else
+                    {
+                        // Not all data received. Get more.  
+                        handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                            new AsyncCallback(ReceiveCallback), state);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
+            }
+        }
+
+        private void Send(Socket handler, string data)
         {
             // Convert the string data to byte data using ASCII encoding.  
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
+            byte[] byteData = Encoding.ASCII.GetBytes(data + "<EOF>");
 
             // Begin sending the data to the remote device.  
             handler.BeginSend(byteData, 0, byteData.Length, 0,
                 new AsyncCallback(SendCallback), handler);
         }
 
-        private static void SendCallback(IAsyncResult ar)
+        private void SendCallback(IAsyncResult ar)
         {
             try
             {
@@ -186,13 +244,14 @@ namespace KTCommon.Internet
                 int bytesSent = handler.EndSend(ar);
                 Console.WriteLine("Sent {0} bytes to client.", bytesSent);
 
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
+                //handler.Shutdown(SocketShutdown.Both);
+                //handler.Close();
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(ex.ToString());
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
             }
         }
 
@@ -215,6 +274,7 @@ namespace KTCommon.Internet
             catch (SocketException ex)
             {
                 string temp = ex.ToString();
+                TransactionError?.Invoke(this, new ExceptionEventArgs(ex));
             }
         }
 
@@ -222,8 +282,24 @@ namespace KTCommon.Internet
         {
             foreach (Socket client in _clients.Values)
             {
+                if (IsSocketConnected(client) == false)
+                {
+                    //Socket socket = null;
+                    //_clients.TryRemove(client.LocalEndPoint.ToString(), out socket);
+                    continue;
+                }
+
                 Send(client, content);
             }
+        }
+
+        private static bool IsSocketConnected(Socket socket)
+        {
+            try
+            {
+                return !(socket.Poll(1, SelectMode.SelectRead) && socket.Available == 0);
+            }
+            catch (SocketException) { return false; }
         }
 
         #region IDisposable
