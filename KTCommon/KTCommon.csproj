@@ -57,6 +57,7 @@
     <Compile Include="IO\Csv\BaseCsvReader.cs" />
     <Compile Include="Logger\LogEventArgs.cs" />
     <Compile Include="EventBus\KtMmfEventBus.cs" />
+    <Compile Include="Security\CryptographyHelper.cs" />
     <Compile Include="Structures\ExceptionEventArgs.cs" />
     <Compile Include="Structures\KtTimerPassEventArgs.cs" />
     <Compile Include="Timers\BaseTask.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="Core\MessageEventArgs.cs" />
     <Compile Include="Logger\NameDateEarlyFirst.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Security\Security.cs" />
+    <Compile Include="Security\SecurityHelper.cs" />
     <Compile Include="Logger\SimpleFileLog.cs" />
     <Compile Include="Core\SysUtils.cs" />
     <Compile Include="Timers\KtTimer.cs" />

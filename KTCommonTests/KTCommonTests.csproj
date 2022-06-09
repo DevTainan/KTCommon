@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CryptographyHelperTests.cs" />
     <Compile Include="KtMmfEventBusTests.cs" />
     <Compile Include="KTAppEventBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

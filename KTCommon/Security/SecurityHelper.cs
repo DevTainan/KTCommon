@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace KTCommon
 {
-    public class Security
+    public class SecurityHelper
     {
         //加密動作
         string strKey = "toyo1234";

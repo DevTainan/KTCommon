@@ -7,10 +7,12 @@
 ## [2.2.0.0]
 ### Added
 - KTCommonTests test projects
+- CryptographyHelper
 ### Changed
 - KTAppEventBus
 - AsynchronousSocketServer
 - AsynchronousSocketClient
+- SecurityHelper
 
 ## [2.1.0.0] - 2022-05-12
 ### Added
