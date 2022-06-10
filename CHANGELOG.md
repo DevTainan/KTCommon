@@ -4,7 +4,7 @@
 
 更新日誌的格式將會基於 [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
-## [2.2.0.0]
+## [2.2.0.0] - 2022-06-10
 ### Added
 - KTCommonTests test projects
 - CryptographyHelper

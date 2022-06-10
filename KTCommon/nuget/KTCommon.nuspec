@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>KTCommon</id>
-    <version>2.0.0</version>
+    <version>2.2.0</version>
     <title>$title$</title>
     <authors>kentseng</authors>
     <owners>kentseng</owners>
@@ -12,12 +12,11 @@
     <iconUrl>https://github.com/DevTainan/KTCommon/tree/master/KTCommon/KTCommon/images/csharp.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.NET Common Lib</description>
-    <releaseNotes>First release of the package.</releaseNotes>
+    <releaseNotes>Add functions, bug fixes and performance improvements.</releaseNotes>
     <copyright>Copyright 2017 (c) DevTainan. All rights reserved.</copyright>
     <tags>DevTainan, KTCommon Lib</tags>
+	<readme>docs\README.md</readme>
     <dependencies>
-      <group targetFramework=".NETFramework2.0" />
-      <group targetFramework=".NETFramework3.5" />
       <group targetFramework=".NETFramework4.0" />
       <group targetFramework=".NETFramework4.5" />
     </dependencies>
@@ -26,5 +25,6 @@
     <file src="lib\**" target="lib" />
     <file src="licenses\LICENSE.txt" target="" />
     <file src="licenses\icon.png" target="images\" />
+	<file src="docs\README.md" target="docs\" />
   </files>
 </package>
