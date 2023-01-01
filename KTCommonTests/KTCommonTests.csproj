@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CryptographyHelperTests.cs" />
+    <Compile Include="KtMemoryMappedFileTests.cs" />
     <Compile Include="KtMmfEventBusTests.cs" />
     <Compile Include="KTAppEventBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

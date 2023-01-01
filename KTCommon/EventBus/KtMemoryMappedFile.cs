@@ -7,8 +7,9 @@ namespace KTCommon.EventBus
 {
     public class KtMemoryMappedFile : IDisposable
     {
+        // https://learn.microsoft.com/en-us/dotnet/api/system.io.memorymappedfiles.memorymappedfile?view=net-7.0
         private MemoryMappedFile _mmf;
-        private readonly long _size = 512;
+        private readonly long _size = 512;  // 要配置給記憶體對應檔的大小上限 (以位元組為單位)
         private static readonly string _mutexName = "KtMemoryMappedFile";
         private static Mutex _mutex;
 
